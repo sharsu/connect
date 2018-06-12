@@ -1,0 +1,43 @@
+package com.inspiware.connect.gateway.security.oauth2;
+
+import com.inspiware.connect.gateway.configuration.ServiceProperties;
+import com.inspiware.connect.gateway.configuration.oauth2.OAuth2Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Base64Utils;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
+import java.nio.charset.StandardCharsets;
+
+/**
+ * Client talking to UAA's token endpoint to do different OAuth2 grants.
+ */
+@Component
+public class UaaTokenEndpointClient extends OAuth2TokenEndpointClientAdapter implements OAuth2TokenEndpointClient {
+    private final Logger log = LoggerFactory.getLogger(UaaTokenEndpointClient.class);
+
+    public UaaTokenEndpointClient(@Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate,
+                                  OAuth2Properties oAuth2Properties, ServiceProperties serviceProperties) {
+        super(restTemplate, oAuth2Properties, serviceProperties);
+    }
+
+    @Override
+    protected void addAuthentication(HttpHeaders reqHeaders, MultiValueMap<String, String> formParams) {
+        reqHeaders.add("Authorization", getAuthorizationHeader());
+    }
+
+    /**
+     * @return a Basic authorization header to be used to talk to UAA.
+     */
+    protected String getAuthorizationHeader() {
+        String clientId = getClientId();
+        String clientSecret = getClientSecret();
+        String authorization = clientId + ":" + clientSecret;
+        return "Basic " + Base64Utils.encodeToString(authorization.getBytes(StandardCharsets.UTF_8));
+    }
+
+}

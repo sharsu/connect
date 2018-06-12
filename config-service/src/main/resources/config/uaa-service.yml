@@ -1,0 +1,53 @@
+server:
+  port: 8067
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8061/eureka/
+      
+logging:
+  pattern: 
+    console: "%d{yyyy-MM-dd HH:mm:ss} ${LOG_LEVEL_PATTERN:-%5p} %m%n"
+
+security:
+  basic:
+    enabled: false
+  oauth2:
+    resource:
+      filter-order: 3
+
+uaa:
+  cors:
+    allowed-origins: "*"
+    allowed-methods: "*"
+    allowed-headers: "*"
+    exposed-headers: "Authorization,Link,X-Total-Count"
+    allow-credentials: true
+    max-age: 1800
+  security:
+    client-authorization:
+      client-id: internal
+      client-secret: internal
+    authentication:
+      jwt:
+        secret: 07a00779cfd8d372c73b40631b62c81503e1b18e
+        # Access Token is valid for 5 mins
+        token-validity-in-seconds: 300
+        # Refresh Token is valid for 7 days
+        token-validity-in-seconds-for-remember-me: 252000
+    ldap:
+      provider-url: ldap://127.0.0.1/dc=example,dc=example,dc=com # Example provider url
+      base: dc=example,dc=example,dc=com
+
+  key-store:
+    name: keystore.jks
+    password: password
+    alias: selfsigned
+  web-client-configuration:
+    # Access Token is valid for 5 mins
+    access-token-validity-in-seconds: 300
+    # Refresh Token is valid for 7 days
+    refresh-token-validity-in-seconds-for-remember-me: 604800
+    client-id: web_app
+    secret: $2a$10$rhah0naSQKKnXtG/KSWSGeK.JfUor3wNWkDlYACL7wZ7K8/7jwcGy

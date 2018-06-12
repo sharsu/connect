@@ -1,0 +1,38 @@
+server:
+  port: 8060
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8061/eureka/
+
+logging:
+  pattern: 
+    console: "%d{yyyy-MM-dd HH:mm:ss} ${LOG_LEVEL_PATTERN:-%5p} %m%n"
+
+security:
+  basic:
+    enabled: false
+  oauth2:
+    resource:
+      filter-order: 3
+
+oauth2:
+  signature-verification:
+    public-key-endpoint-uri: http://localhost:8067/oauth/token_key
+    #ttl for public keys to verify JWT tokens (in ms)
+    ttl: 3600000
+    #max. rate at which public keys will be fetched (in ms)
+    public-key-refresh-rate-limit: 10000
+  web-client-configuration:
+    client-id: web_app
+    # secret: $2a$10$rhah0naSQKKnXtG/KSWSGeK.JfUor3wNWkDlYACL7wZ7K8/7jwcGy
+    secret: changeit
+
+service:
+  security:
+    client-authorization:
+      access-token-uri: http://localhost:8067/oauth/token
+      token-service-id: UAA-SERVICE
+      client-id: internal
+      client-secret: internal
